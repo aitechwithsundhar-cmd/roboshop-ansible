@@ -1,9 +1,9 @@
-- name: configure catalouge 
-  hosts: catalouge
+- name: configure catalogue
+  hosts: catalogue
   become: yes 
   tasks:
   - name: enable nodejs 20
-    anable.builtin.dnf: dnf module enable nodejs:20 -y
+    ansible.builtin.dnf: dnf module enable nodejs:20 -y
 
   - name: install nodejs 
     ansible.builtin.dnf:
@@ -28,7 +28,7 @@
       url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
       dest: /tmp/catalogue.zip
 
-  - name: unarchive catalouge 
+  - name: unarchive catalogue 
     ansible.builtin.unarchive:
     src: /tmp/catalogue.zip
     dest: /app
