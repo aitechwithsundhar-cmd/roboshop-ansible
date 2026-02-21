@@ -5,7 +5,7 @@
   vars:
     sg_id: sg-095a16b494e83f916
     ami_id: ami-0220d79f3f480ecf5
-    domain name: techdaws.online
+    domain_name: techdaws.online
     env: dev
     instances:
       - mongodb
