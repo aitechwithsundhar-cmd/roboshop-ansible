@@ -35,7 +35,7 @@
         state: present 
         zone: "{{ domain_name }}"
         record: "{{ item.item}}-{{env}}.{{ domain_name}}"
-        type: a
+        type: A
         ttl: 1
         value: "{{ item.instances[0].private_ip_address }}"
         wait: true 
