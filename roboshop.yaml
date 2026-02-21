@@ -5,6 +5,7 @@
   vars:
     sg_id: sg-095a16b494e83f916
     ami_id: ami-0220d79f3f480ecf5
+    domain name: techdaws.online
     env: dev
     instances:
       - mongodb
@@ -28,3 +29,15 @@
     - name: print the output
       ansible.builtin.debug:
         msg: "{{ ec2_instance }}"
+      
+    - name: create r53 records
+      amazon.aws.route53:
+        state: present 
+        zone: "{{ techdaws.online }}"
+        record: "{{ item.item}}-{{env}}.{{ domain_name}}"
+        type: a
+        ttl: 1
+        value: "{{ item.instance[0].private_ip_address }}"
+        wait: true 
+      loop: "{{ ec2_output.results }}"
+
