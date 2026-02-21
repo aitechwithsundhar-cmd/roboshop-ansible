@@ -33,11 +33,11 @@
     - name: create r53 records
       amazon.aws.route53:
         state: present 
-        zone: "{{ techdaws.online }}"
+        zone: "{{ domain_name }}"
         record: "{{ item.item}}-{{env}}.{{ domain_name}}"
         type: a
         ttl: 1
-        value: "{{ item.instance[0].private_ip_address }}"
+        value: "{{ item.instances[0].private_ip_address }}"
         wait: true 
-      loop: "{{ ec2_output.result }}"
+      loop: "{{ ec2_instance.result }}"
 
