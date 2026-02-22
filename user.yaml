@@ -54,7 +54,7 @@
 
     - name: copy user service file
       ansible.builtin.template:
-        src: user.service.j2
+        src: user.service
         dest: /etc/systemd/system/user.service
 
     - name: reload systemd
