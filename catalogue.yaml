@@ -67,8 +67,12 @@
       ansible.builtin.debug:
         msg: "{{ catalogue_output.stdout }}"
 
+    - name: load the products 
+      ansible.builtin.shell: mongosh --host "{{ MONGODB_HOST }}" </app/db/master-data.js
+      when: catalogue_output.stdout | int < 0 
+
     - name: unmask catalogue service 
-      ansible.builtin.command: sysytemctl unmask catalogue 
+      ansible.builtin.command: systemctl unmask catalogue 
       ignore_errors: true 
 
     - name: Reload systemd
