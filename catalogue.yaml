@@ -67,6 +67,10 @@
       ansible.builtin.debug:
         msg: "{{ catalogue_output.stdout }}"
 
+    - name: unmask catalogue service 
+      ansible.builtin.command: sysytemctl unmask catalogue 
+      ignore_errors: true 
+
     - name: Reload systemd
       ansible.builtin.command: systemctl daemon-reload
 
