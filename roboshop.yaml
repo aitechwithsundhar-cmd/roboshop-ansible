@@ -62,7 +62,7 @@
         state: absent
         name: "{{ item }}-{{ env }}"
         wait: false
-      loop: "{{ instances }}"
+      loop: "{{ instances.split(',') }}"
       when: action == "delete"
 
     - name: delete r53 records
