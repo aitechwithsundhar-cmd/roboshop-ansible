@@ -1,5 +1,7 @@
+# ansible-playbook -i locolhost, -e 'instances=["mongodb", "catalogue", "redis", "user", "cart", "mysql", "shipping", "rabbitmq", "payment", "frontend"]' roboshop.yaml
+
 - name: create ec2 and r53 records
-  hosts: localhost
+  hosts: all
   connection: local
 
   vars:
@@ -59,6 +61,7 @@
       amazon.aws.ec2_instance:
         state: absent
         name: "{{ item }}-{{ env }}"
+        wait: false
       loop: "{{ instances }}"
       when: action == "delete"
 
