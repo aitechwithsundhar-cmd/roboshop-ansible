@@ -14,20 +14,20 @@
   
   - name: start and enable rabbitmq 
     ansible.builtin.service:
+      name: rabbitmq-server
       state: restarted 
       enabled: yes 
-      name: rabbitmq 
-
-  - name: craete rabbitmq user
+    
+  - name: create rabbitmq user
     community.rabbitmq.rabbitmq_user:
-      user: roboshop 
+      user: roboshop
       password: roboshop123
       permissions:
-        - vhost: / 
-          Configure_priv: .*
-          read_priv: .*
-          write_priv: .*
-      state: present 
+        - vhost: /
+          configure_priv: ".*"
+          read_priv: ".*"
+          write_priv: ".*"
+      state: present
     
 
   
