@@ -75,6 +75,13 @@
     - name: reload systemd
       ansible.builtin.command: systemctl daemon-reload
 
+    - name: install python mysql dependencies
+      ansible.builtin.pip:
+        name:
+          - PyMySQL
+          - cryptography
+        executable: pip3
+
     - name: import shipping database schema
       community.mysql.mysql_db:
         state: import
