@@ -1,4 +1,4 @@
-- name: configure fronend server 
+- name: configure frontend server 
   hosts: frontend 
   become: yes 
   tasks: 
