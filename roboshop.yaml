@@ -1,8 +1,9 @@
 # ansible-playbook -i locolhost, -e 'instances=["mongodb", "catalogue", "redis", "user", "cart", "mysql", "shipping", "rabbitmq", "payment", "frontend"]' roboshop.yaml
 
-- name: create ec2 and r53 records
+- name: Create or Delete EC2 instances and Route53 records
   hosts: all
   connection: local
+  gather_facts: no
 
   vars:
     sg_id: sg-095a16b494e83f916
@@ -10,28 +11,37 @@
     domain_name: techdaws.online
     env: dev
     action: create
+
     instances:
       - mongodb
       - catalogue
+      - redis
+      - user
+      - cart
+      - mysql
+      - shipping
+      - rabbitmq
+      - payment
+      - frontend
 
   tasks:
 
-    - name: create ec2 instance
+    - name: Create EC2 instances
       amazon.aws.ec2_instance:
+        name: "{{ item }}-{{ env }}"
         instance_type: t3.micro
         security_group: "{{ sg_id }}"
         image_id: "{{ ami_id }}"
-        name: "{{ item }}-{{ env }}"
+        wait: yes
         tags:
           Project: roboshop
           Component: "{{ item }}"
-          environment: "{{ env }}"
-          name: "{{ item }}-{{ env }}"
-      loop: "{{ instances.split(',')}}"
-      register: ec2_instance
+          Environment: "{{ env }}"
+      loop: "{{ instances }}"
+      register: ec2_output
       when: action == "create"
 
-    - name: create r53 records
+    - name: Create Route53 records
       amazon.aws.route53:
         state: present
         zone: "{{ domain_name }}"
@@ -40,36 +50,44 @@
         ttl: 1
         value: "{{ item.instances[0].private_ip_address }}"
         wait: true
-      loop: "{{ ec2_instance.results }}"
+      loop: "{{ ec2_output.results }}"
       when: action == "create"
 
-    - name: create frontend dns
+    - name: Create frontend public DNS record
       amazon.aws.route53:
         state: present
         zone: "{{ domain_name }}"
         record: "roboshop-{{ env }}.{{ domain_name }}"
         type: A
         ttl: 1
-        value: "{{ item.instances[0].public_ip_address }}"
+        value: "{{ item.instances[0].private_ip_address }}"
         wait: true
-      loop: "{{ ec2_instance.results }}"
+      loop: "{{ ec2_output.results }}"
       when:
         - item.item == "frontend"
         - action == "create"
 
-    - name: delete ec2 instance
+    - name: Delete EC2 instances
       amazon.aws.ec2_instance:
-        state: absent
         name: "{{ item }}-{{ env }}"
-        wait: false
-      loop: "{{ instances.split(',') }}"
+        state: absent
+        wait: no
+      loop: "{{ instances }}"
       when: action == "delete"
 
-    - name: delete r53 records
+    - name: Delete Route53 records
       amazon.aws.route53:
         state: absent
         zone: "{{ domain_name }}"
         record: "{{ item }}-{{ env }}.{{ domain_name }}"
         type: A
       loop: "{{ instances }}"
+      when: action == "delete"
+
+    - name: Delete frontend DNS
+      amazon.aws.route53:
+        state: absent
+        zone: "{{ domain_name }}"
+        record: "roboshop-{{ env }}.{{ domain_name }}"
+        type: A
       when: action == "delete"
