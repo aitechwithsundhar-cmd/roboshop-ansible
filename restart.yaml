@@ -1,0 +1,14 @@
+- name: restart all services
+  hosts: all
+  become: yes
+  tasks:
+    - name: restart services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - mongod
+        - redis
+        - mysqld
+        - rabbitmq-server
+        - nginx
