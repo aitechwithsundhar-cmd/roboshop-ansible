@@ -38,7 +38,7 @@
         path: /etc/nginx/nginx.conf
 
     - name: copy ngnix.conf 
-      ansible.build.template:
+      ansible.builtin.template:
         src: nginx.conf
         path: /etc/nginx/nginx.conf
 
