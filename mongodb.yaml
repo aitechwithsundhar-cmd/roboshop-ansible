@@ -1,53 +1,36 @@
-- name: configure mongodb server
+- name: Setup MongoDB
   hosts: mongodb
   become: yes
-
   tasks:
-    - name: copy mongodb repo
-      ansible.builtin.copy:
-        src: mongo.repo
-        dest: /etc/yum.repos.d/mongo.repo
 
-    - name: install mongodb
+    - name: Copy MongoDB repo
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/mongo.repo
+        content: |
+          [mongodb-org-7.0]
+          name=MongoDB Repository
+          baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/7.0/x86_64/
+          enabled=1
+          gpgcheck=0
+
+    - name: Install MongoDB
       ansible.builtin.dnf:
         name: mongodb-org
         state: present
 
-    - name: enable and start mongodb
+    - name: Start MongoDB
       ansible.builtin.service:
         name: mongod
         state: started
         enabled: yes
 
-    - name: allow remote connections
+    - name: Allow remote connections
       ansible.builtin.replace:
         path: /etc/mongod.conf
         regexp: 127.0.0.1
         replace: 0.0.0.0
 
-    - name: restart mongodb
+    - name: Restart MongoDB
       ansible.builtin.service:
         name: mongod
         state: restarted
-
-    - name: create app directory
-      ansible.builtin.file:
-        path: /app
-        state: directory
-
-    - name: download mongodb schema
-      ansible.builtin.get_url:
-        url: https://roboshop-artifacts.s3.amazonaws.com/mongodb.zip
-        dest: /tmp/mongodb.zip
-
-    - name: extract mongodb schema
-      ansible.builtin.unarchive:
-        src: /tmp/mongodb.zip
-        dest: /tmp
-        remote_src: yes
-
-    - name: load catalogue schema
-      ansible.builtin.command: mongosh < /app/mongodb/catalogue.js
-
-    - name: load users schema
-      ansible.builtin.command: mongosh < /app/mongodb/users.js
