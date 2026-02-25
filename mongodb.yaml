@@ -37,13 +37,13 @@
 
     - name: download mongodb schema
       ansible.builtin.get_url:
-        url: https://roboshop-artifacts.s3.amazonaws.com/mongodb-v3.zip
+        url: https://roboshop-artifacts.s3.amazonaws.com/mongodb.zip
         dest: /tmp/mongodb.zip
 
-    - name: extract schema
+    - name: extract mongodb schema
       ansible.builtin.unarchive:
         src: /tmp/mongodb.zip
-        dest: /app
+        dest: /tmp
         remote_src: yes
 
     - name: load catalogue schema
