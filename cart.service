@@ -6,7 +6,6 @@ User=roboshop
 Environment=REDIS_HOST={{ REDIS_HOST }}
 Environment=CATALOGUE_HOST={{ CATALOGUE_HOST }}
 Environment=CATALOGUE_PORT=8080
-Environment=MONGO_HOST=mongogdb-dev.techdaws.online
 ExecStart=/bin/node /app/server.js
 SyslogIdentifier=cart
 
