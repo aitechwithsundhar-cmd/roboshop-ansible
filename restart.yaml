@@ -1,14 +1,58 @@
-- name: restart all services
-  hosts: all
+- name: restart mongodb
+  hosts: mongodb
   become: yes
   tasks:
-    - name: restart services
+    - name: restart mongod
       ansible.builtin.service:
-        name: "{{ item }}"
+        name: mongod
         state: restarted
-      loop:
-        - mongod
-        - redis
-        - mysqld
-        - rabbitmq-server
-        - nginx
+
+- name: restart redis
+  hosts: redis
+  become: yes
+  tasks:
+    - name: restart redis
+      ansible.builtin.service:
+        name: redis
+        state: restarted
+
+- name: restart mysql
+  hosts: mysql
+  become: yes
+  tasks:
+    - name: restart mysqld
+      ansible.builtin.service:
+        name: mysqld
+        state: restarted
+
+- name: restart rabbitmq
+  hosts: rabbitmq
+  become: yes
+  tasks:
+    - name: restart rabbitmq
+      ansible.builtin.service:
+        name: rabbitmq-server
+        state: restarted
+
+- name: restart frontend
+  hosts: frontend
+  become: yes
+  tasks:
+    - name: restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+
+- name: restart application services
+  hosts:
+    - catalogue
+    - user
+    - cart
+    - shipping
+    - payment
+  become: yes
+  tasks:
+    - name: restart app service
+      ansible.builtin.service:
+        name: "{{ inventory_hostname.split('-')[0] }}"
+        state: restarted
