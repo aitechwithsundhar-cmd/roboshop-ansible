@@ -33,7 +33,7 @@
         remote_src: yes
 
     - name: remove defult ngnix 
-      ansible.build.file:
+      ansible.builtin.file:
         state: absent 
         path: /etc/nginx/nginx.conf
 
