@@ -32,18 +32,18 @@
         dest: /usr/share/nginx/html
         remote_src: yes
 
-    - name: remove defult nginx 
+    - name: remove default nginx config
       ansible.builtin.file:
-        state: absent 
         path: /etc/nginx/nginx.conf
+        state: absent
 
-    - name: copy nginx.conf 
+    - name: copy nginx.conf
       ansible.builtin.template:
         src: nginx.conf
-        path: /etc/nginx/nginx.conf
+        dest: /etc/nginx/nginx.conf
 
-    - name: restart nginx 
+    - name: restart nginx
       ansible.builtin.service:
-        name: nginx 
-        state: restarted 
-        enabled: yes 
+        name: nginx
+        state: restarted
+        enabled: yes
