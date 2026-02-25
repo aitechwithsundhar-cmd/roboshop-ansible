@@ -27,7 +27,7 @@
           Component: "{{ item }}"
           environment: "{{ env }}"
           name: "{{ item }}-{{ env }}"
-      loop: "{{ instances.split }}"
+      loop: "{{ instances.split(',')}}"
       register: ec2_instance
       when: action == "create"
 
