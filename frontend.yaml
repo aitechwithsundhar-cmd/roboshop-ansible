@@ -32,7 +32,7 @@
         dest: /usr/share/nginx/html
         remote_src: yes
 
-    - name: remove defult ngnix 
+    - name: remove defult nginx 
       ansible.builtin.file:
         state: absent 
         path: /etc/nginx/nginx.conf
@@ -42,8 +42,8 @@
         src: nginx.conf
         path: /etc/nginx/nginx.conf
 
-    - name: restart ngnix 
+    - name: restart nginx 
       ansible.builtin.service:
-        name: ngnix 
+        name: nginx 
         state: restarted 
         enabled: yes 
