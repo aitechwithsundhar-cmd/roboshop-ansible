@@ -1,36 +1,49 @@
-- name: Setup MongoDB
+- name: Setup MongoDB Server
   hosts: mongodb
   become: yes
+
   tasks:
 
-    - name: Copy MongoDB repo
-      ansible.builtin.copy:
+    - name: Copy MongoDB repo file
+      copy:
+        src: mongo.repo
         dest: /etc/yum.repos.d/mongo.repo
-        content: |
-          [mongodb-org-7.0]
-          name=MongoDB Repository
-          baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/7.0/x86_64/
-          enabled=1
-          gpgcheck=0
 
     - name: Install MongoDB
-      ansible.builtin.dnf:
+      yum:
         name: mongodb-org
-        state: present
+        state: installed
+
+    - name: Enable MongoDB visibility
+      replace:
+        path: /etc/mongod.conf
+        regexp: '127.0.0.1'
+        replace: '0.0.0.0'
 
     - name: Start MongoDB
-      ansible.builtin.service:
+      systemd:
         name: mongod
         state: started
         enabled: yes
 
-    - name: Allow remote connections
-      ansible.builtin.replace:
-        path: /etc/mongod.conf
-        regexp: 127.0.0.1
-        replace: 0.0.0.0
+    - name: Remove old schema directory if exists
+      file:
+        path: /tmp/mongodb-main
+        state: absent
 
-    - name: Restart MongoDB
-      ansible.builtin.service:
-        name: mongod
-        state: restarted
+    - name: Download MongoDB schema
+      git:
+        repo: https://github.com/roboshop-devops-project/mongodb.git
+        dest: /tmp/mongodb-main
+
+    - name: Drop catalogue database
+      shell: mongosh --quiet --eval "db.getSiblingDB('catalogue').dropDatabase()"
+
+    - name: Drop users database
+      shell: mongosh --quiet --eval "db.getSiblingDB('users').dropDatabase()"
+
+    - name: Load catalogue schema
+      shell: mongosh < /tmp/mongodb-main/catalogue.js
+
+    - name: Load users schema
+      shell: mongosh < /tmp/mongodb-main/users.js
