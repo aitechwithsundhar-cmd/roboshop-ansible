@@ -3,7 +3,7 @@
   become: yes
 
   tasks:
-    - name: reset redis module
+    - name: enable redis module
       ansible.builtin.command: dnf module enable redis:7 -y
 
     - name: install redis
@@ -28,3 +28,5 @@
         name: redis
         state: restarted
         enabled: yes
+
+        
