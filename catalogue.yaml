@@ -54,7 +54,7 @@
         chdir: /app
 
     - name: Copy service file
-      ansible.builtin.copy:
+      ansible.builtin.template:
         src: catalogue.service
         dest: /etc/systemd/system/catalogue.service
 
